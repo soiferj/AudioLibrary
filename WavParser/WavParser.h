@@ -10,16 +10,14 @@
 
 #pragma once
 
-#include "utilities.h"
-
 #include <iostream>
 #include <fstream>
 #include <stdint.h>
 #include <string>
+#include <exception>
 
 using namespace std;
 
-/* api for reading in and accessing a .wav file */
 class WavParser
 {
 public:
@@ -76,3 +74,18 @@ private:
     void zeroOutBuffer(double* buffer, long size);
 };
 
+class WavParserException : public exception
+{
+public:
+    WavParserException(string ss)
+        : errorMessage(ss)
+    {}
+
+    const char* what() const throw()
+    {
+       return errorMessage.c_str();
+    } 
+
+private:
+    string errorMessage;
+}

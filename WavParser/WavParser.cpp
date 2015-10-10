@@ -54,14 +54,14 @@ void WavParser::ReadFromFile(string &fileToRead)
     infile.open(cFileName, ifstream::binary);
     if ( !infile.good() )
     {
-        throw FidgetException("Error: Unable to open file...");
+        throw WavParserException("Error: Unable to open file...");
     }
     
     /* read chunkID */
     infile.read(chunkID, WavParser::NUM_CHARS);
     if ( memcmp(chunkID, "RIFF", 4) )
     {
-        throw FidgetException("Error: Not a RIFF file...");
+        throw WavParserException("Error: Not a RIFF file...");
     }
     
     /* read chunk size */
@@ -71,7 +71,7 @@ void WavParser::ReadFromFile(string &fileToRead)
     infile.read(format, WavParser::NUM_CHARS);
     if ( memcmp(format, "WAVE", 4) )
     {
-        throw FidgetException("Error: Not a WAV file...");
+        throw WavParserException("Error: Not a WAV file...");
     }
     
     /* read "fmt " */
@@ -92,14 +92,14 @@ void WavParser::ReadFromFile(string &fileToRead)
     infile.read(reinterpret_cast<char*>(&audioFormat), sizeof(audioFormat));
     if (audioFormat != 1)
     {
-        throw FidgetException("Error: unable to read compressed audio file...");
+        throw WavParserException("Error: unable to read compressed audio file...");
     }
     
     /* read number of channels */
     infile.read(reinterpret_cast<char*>(&numChannels), sizeof(numChannels));
     if ( (numChannels != 1) && (numChannels != 2) )
     {
-        throw FidgetException("Error: not a mono or stereo file, unable to construct buffers...");
+        throw WavParserException("Error: not a mono or stereo file, unable to construct buffers...");
     }
     
     /* read sample rate */
