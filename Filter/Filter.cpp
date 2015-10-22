@@ -81,9 +81,12 @@ double Filter::FilterSample(double sample)
 {
     if (aCoefficients == nullptr) // if coefficients haven't been set yet
         return 0.0;
+
+    /* store new input and "shift" buffer */
+    DecrementIndex();
+    delayLine[index] = sample;
     
     double output = 0.0;
-    
     for (int i = 0; i < length; i++)
     {
         if (i < aLength)
@@ -93,7 +96,9 @@ double Filter::FilterSample(double sample)
         
         if (i < bLength)
         {
-            output -= aCoefficients[i]*outputs[index];
+            IncrementIndex();
+            output -= aCoefficients[i]*outputs[index]; // one index greater than delay line index; i.e. delayLine[0] links to outputs[1]
+            DecrementIndex();
         }
         
         IncrementIndex();
@@ -102,10 +107,8 @@ double Filter::FilterSample(double sample)
     double denom = (aCoefficients[0] != 0.0) ? aCoefficients[0] : 1.0;
     output /= denom;
     
-    /* store new sample/output and "shift" buffer */
-    DecrementIndex(); // index now is at oldest sample
-    delayLine[index] = sample;
-    outputs[index] = output; // this is now the newest sample, same as shifting buffer
+    /* store new output */
+    outputs[index] = output;
     
     return output;
 }
